@@ -2,8 +2,8 @@
 <html lang="En">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-
     <title>InLink.com</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/ico.png') }}"/>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css"
           integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="../static/css/style.css"/>
@@ -32,10 +32,14 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item"><a class="nav-link" href="" data-scroll-nav="0">Home</a></li>
-                <li class="nav-item"><a class="nav-link" href="#" data-scroll-nav="1">About</a></li>
-                <li class="nav-item"><a class="nav-link" href="#" data-scroll-nav="2">Services</a></li>
                 <li class="nav-item"><a class="nav-link" href="#" data-scroll-nav="3">Own Work</a></li>
-                <li class="nav-item"><a class="nav-link" href="#" data-scroll-nav="4">Contact</a></li>
+                {% if is_authenticated %}
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('registration') }}" data-scroll-nav="4">Logout</a></li>
+                {% endif %}
+                {% if not is_authenticated %}
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('registration') }}" data-scroll-nav="4">Registration</a></li>
+                {% endif %}
+
             </ul>
         </div>
     </div>
