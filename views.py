@@ -12,6 +12,7 @@ app = Flask(__name__)
 @app.route('/')
 def index():
     context = engine()
+
     return render_template('index.html', **context)
 
 
@@ -28,6 +29,7 @@ def engine(url='https://fishki.net/video/'):
         'images': [],
         'videos': [],
         'links': [],
+        'url': url
     }
 
     for link in context['images']:
@@ -42,7 +44,7 @@ def engine(url='https://fishki.net/video/'):
         if '//' not in src:
             src = '//'.join(url.split('/')[:3]) + '/' + src.strip('/')
             src = src.replace('////', '//')
-        cleaned_context['links'].append(
+        cleaned_context['images'].append(
             f'<img alt="{alt}" src="{src}"></img>'
         )
         # print("IMG Inner Text is: {}".format(alt))
@@ -75,7 +77,7 @@ def engine(url='https://fishki.net/video/'):
         )
         # print("LINK Inner Text is: {}".format(link.text.strip()))
         # print("LINK href is: {}".format(href))
-        return cleaned_context
+    return cleaned_context
 
 
 if __name__ == "__main__":
