@@ -24,7 +24,7 @@
 <body>
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg">
-    <div class="container"><a class="navbar-brand navbar-logo" href="#"> <img
+    <div class="container"><a class="navbar-brand navbar-logo" href="{{ url_for('service') }}"> <img
             src="{{ url_for('static', filename='images/logo-white.png') }}" alt="logo" class="logo-1"> </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
                 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span
@@ -34,12 +34,13 @@
                 <li class="nav-item"><a class="nav-link" href="" data-scroll-nav="0">Home</a></li>
                 <li class="nav-item"><a class="nav-link" href="#" data-scroll-nav="3">Own Work</a></li>
                 {% if is_authenticated %}
-                <li class="nav-item"><a class="nav-link" href="{{ url_for('registration') }}" data-scroll-nav="4">Logout</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('logout') }}" data-scroll-nav="4">Logout</a>
+                </li>
                 {% endif %}
                 {% if not is_authenticated %}
-                <li class="nav-item"><a class="nav-link" href="{{ url_for('registration') }}" data-scroll-nav="4">Registration</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('registration') }}" data-scroll-nav="4">Registration</a>
+                </li>
                 {% endif %}
-
             </ul>
         </div>
     </div>
@@ -52,8 +53,10 @@
     <div class="banner-overlay">
         <div class="container">
             <h1 class="text-capitalize">Больше. Лучше. Быстрее.</h1>
-            <p>Мы используем только самые лучшие алгоритмы поиска информации на сайтах.<br>От наших вычислений не скроется ни один файл.</p>
-            <a href="#" class="banner-btn">Приступить</a></div>
+            <p>Мы используем только самые лучшие алгоритмы поиска информации на сайтах.<br>От наших вычислений не
+                скроется ни один файл.</p>
+            <div class="banner-btn" id="go_service">Приступить</div>
+        </div>
     </div>
 </div>
 
@@ -66,9 +69,10 @@
         <div class="row">
             <div class="col-md-12 section-title text-center">
                 <div class="col-lg-12 section-title text-center">
-                <h3>{{ url }}</h3>
+                    <h3>{{ url }}</h3>
                 </div>
-                <p>Мы специально разделили найденные файлы на категории.<br>Ведь так гораздо удобнее просматривать и сохранять данные</p>
+                <p>Мы специально разделили найденные файлы на категории.<br>Ведь так гораздо удобнее просматривать и
+                    сохранять данные</p>
                 <span class="section-title-line"></span></div>
             {% if images|length > 0 %}
             <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12 mb-30">
@@ -121,37 +125,41 @@
             <div class="gallery no-padding col-lg-12 col-sm-12" style="display: flex; overflow-x: scroll !important;">
                 <div class="col-lg-4 col-sm-6 spring no-padding">
                     <div class="item-img"><a class="single-image" href="images/gall1.jpg"></a>
-                        <div class="part-img"><img src="{{ url_for('static', filename='images/gall1.jpg') }}" alt="image">
+                        <div class="part-img"><img src="{{ url_for('static', filename='images/gall1.jpg') }}"
+                                                   alt="image">
                             <div class="overlay-img">
-                                <h4>Spring</h4>
-                                <h6>Autumn Leaves</h6>
+                                <h4>Не просто сократитель ссылок</h4>
+                                <h6>Проект DaLinci.com</h6>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-4 col-sm-6 spring no-padding">
                     <div class="item-img"><a class="single-image" href="images/gall2.jpg"></a>
-                        <div class="part-img"><img src="{{ url_for('static', filename='images/gall2.jpg') }}" alt="image">
+                        <div class="part-img"><img src="{{ url_for('static', filename='images/gall2.jpg') }}"
+                                                   alt="image">
                             <div class="overlay-img">
-                                <h4>Spring</h4>
-                                <h6>Flower Pot</h6>
+                                <h4>Выбери свой автомобиль мечты</h4>
+                                <h6>Проект Алтай Авто</h6>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-4 col-sm-6 spring no-padding">
                     <div class="item-img"><a class="single-image" href="images/gall3.jpg"></a>
-                        <div class="part-img"><img src="{{ url_for('static', filename='images/gall3.jpg') }}" alt="image">
+                        <div class="part-img"><img src="{{ url_for('static', filename='images/gall3.jpg') }}"
+                                                   alt="image">
                             <div class="overlay-img">
-                                <h4>Spring</h4>
-                                <h6>Bird with Flower</h6>
+                                <h4>Удачи в будущих покупках</h4>
+                                <h6>Интернет Магазин</h6>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-4 col-sm-6 summer no-padding">
                     <div class="item-img"><a class="single-image" href="images/gall4.jpg"></a>
-                        <div class="part-img"><img src="{{ url_for('static', filename='images/gall4.jpg') }}" alt="image">
+                        <div class="part-img"><img src="{{ url_for('static', filename='images/gall4.jpg') }}"
+                                                   alt="image">
                             <div class="overlay-img">
                                 <h4>Summer</h4>
                                 <h6>Vacation Trip Van</h6>
@@ -161,17 +169,19 @@
                 </div>
                 <div class="col-lg-4 col-sm-6 winter no-padding">
                     <div class="item-img"><a class="single-image" href="images/gall5.jpg"></a>
-                        <div class="part-img"><img src="{{ url_for('static', filename='images/gall5.jpg') }}" alt="image">
+                        <div class="part-img"><img src="{{ url_for('static', filename='images/gall5.jpg') }}"
+                                                   alt="image">
                             <div class="overlay-img">
-                                <h4>Winter</h4>
-                                <h6>Girl in the snow</h6>
+                                <h4>Удачи в будущих покупках</h4>
+                                <h6>Интернет Магазин</h6>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-4 col-sm-6 rainy no-padding">
                     <div class="item-img"><a class="single-image" href="images/gall6.jpg"></a>
-                        <div class="part-img"><img src="{{ url_for('static', filename='images/gall6.jpg') }}" alt="image">
+                        <div class="part-img"><img src="{{ url_for('static', filename='images/gall6.jpg') }}"
+                                                   alt="image">
                             <div class="overlay-img">
                                 <h4>Rainy</h4>
                                 <h6>Man with an Umberalla</h6>
@@ -181,7 +191,8 @@
                 </div>
                 <div class="col-lg-4 col-sm-6 summer no-padding">
                     <div class="item-img"><a class="single-image" href="images/gall7.jpg"></a>
-                        <div class="part-img"><img src="{{ url_for('static', filename='images/gall7.jpg') }}" alt="image">
+                        <div class="part-img"><img src="{{ url_for('static', filename='images/gall7.jpg') }}"
+                                                   alt="image">
                             <div class="overlay-img">
                                 <h4>Summer</h4>
                                 <h6>New Beginning</h6>
@@ -191,7 +202,8 @@
                 </div>
                 <div class="col-lg-4 col-sm-6 rainy no-padding">
                     <div class="item-img"><a class="single-image" href="images/gall8.jpg"></a>
-                        <div class="part-img"><img src="{{ url_for('static', filename='images/gall8.jpg') }}" alt="image">
+                        <div class="part-img"><img src="{{ url_for('static', filename='images/gall8.jpg') }}"
+                                                   alt="image">
                             <div class="overlay-img">
                                 <h4>Rainy</h4>
                                 <h6>Girl in the Rain</h6>
@@ -201,7 +213,8 @@
                 </div>
                 <div class="col-lg-4 col-sm-6 summer no-padding">
                     <div class="item-img"><a class="single-image" href="images/gall9.jpg"></a>
-                        <div class="part-img"><img src="{{ url_for('static', filename='images/gall9.jpg') }}" alt="image">
+                        <div class="part-img"><img src="{{ url_for('static', filename='images/gall9.jpg') }}"
+                                                   alt="image">
                             <div class="overlay-img">
                                 <h4>Summer</h4>
                                 <h6>Fun at the Seashores</h6>
@@ -215,44 +228,71 @@
 </div>
 <!-- End Gallery -->
 <!-- Testimonials -->
-<div class="testimonials">
-    <div class="testimonials-overlay section-padding">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-10 offset-md-1">
-                    <div class="owl-carousel owl-theme">
-                        <div class="testimonial-item text-center">
-                            <div class="icon"><i class="fas fa-comments"></i></div>
-                            <p class="m-auto">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-                                tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
-                                nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-                            <div class="testimonial-author text-center">
-                                <h5>Rup Jakhar</h5>
-                                <h6>Web Desinger</h6>
-                            </div>
-                        </div>
-                        <div class="testimonial-item text-center">
-                            <div class="icon"><i class="fas fa-comments"></i></div>
-                            <p class="m-auto">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-                                tempor incididunt ut labore et dolore magna aliqua.</p>
-                            <div class="testimonial-author text-center">
-                                <h5>Yogesh Singh</h5>
-                                <h6>Web Desinger</h6>
-                            </div>
-                        </div>
-                        <div class="testimonial-item text-center">
-                            <div class="icon"><i class="fas fa-comments"></i></div>
-                            <p class="m-auto">Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-                                ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                                consequat.</p>
-                            <div class="testimonial-author text-center">
-                                <h5>Vivek Singh</h5>
-                                <h6>Web Desinger</h6>
-                            </div>
+<div class="services section-padding bg-grey" data-scroll-index="2">
+    <div class="container">
+        <div class="column"
+             style="display: flex; justify-content: center; flex-direction: column; align-items: center;">
+            <div class="section-title text-center">
+                <div class="section-title text-center">
+                    <h3>Все найденные данные на странице</h3>
+                </div>
+                <p>Мы специально разделили найденные файлы на категории.<br>Ведь так гораздо удобнее просматривать и
+                    сохранять данные</p>
+                <span class="section-title-line"></span>
+                <br>
+                <h1 class="text-capitalize">Время загрузки: {{ meta["load_time"] }}<br><br>Объём данных трафика: {{
+                    meta["content_length"] }}</h1>
+                <br>
+                <button id='check_links' class="banner-btn-3-active">Ссылки</button>
+                <button id='check_photos' class="banner-btn-3-active">Фото</button>
+                <button id='check_videos' class="banner-btn-3-active">Видео</button>
+            </div>
+
+            <div class="showed" id="list-of-links">
+                {% for link, glink in links %}
+                <div class="screen90 col-xs-12 mb-30">
+                    <div class="service-list-box bg-white text-center">
+                        <div class="icon"><i class="fas fa-map-marked"></i></div>
+                        <div class="icon-text">
+                            <h4 class="title-box">Ссылка {{loop.index}}</h4>
+                            <p style="text-overflow: ellipsis;">{{ link }}</p>
+                            <br>
+                            <p style="text-overflow: ellipsis;">{{ glink|safe }}</p>
                         </div>
                     </div>
                 </div>
+                {% endfor %}
             </div>
+
+            <div class="showed" id="list-of-images">
+                {% for img, glink in images %}
+                <div class="screen90 col-xs-12 mb-30">
+                    <div class="service-list-box bg-white text-center">
+                        <div class="icon"><i class="fas fa-map-marked"></i></div>
+                        <div class="icon-text">
+                            <h4 class="title-box">Фотография {{loop.index}}</h4>
+                            {{ img|safe }}
+                            <p style="text-overflow: ellipsis;">{{ glink|safe }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="showed" id="list-of-videos">
+                {% for vid in videos %}
+                <div class="screen90 col-xs-12 mb-30">
+                    <div class="service-list-box bg-white text-center">
+                        <div class="icon"><i class="fas fa-map-marked"></i></div>
+                        <div class="icon-text">
+                            <h4 class="title-box">Видео {{loop.index}}</h4>
+                            {{ vid|safe }}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
         </div>
     </div>
 </div>
@@ -349,21 +389,20 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"
         integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T"
         crossorigin="anonymous"></script>
-
+<script src="{{ url_for('static', filename='js/service.js') }}"></script>
 <script>
     $(window).on("scroll", function () {
 
         let bodyScroll = $(window).scrollTop(),
             navbar = $(".navbar");
 
-        if (bodyScroll > 130) {
+        if (bodyScroll > 300) {
 
             navbar.addClass("nav-scroll");
             $('.navbar-logo img').attr('src', "{{ url_for('static', filename='images/logo-black.png') }}");
 
 
         } else {
-
             navbar.removeClass("nav-scroll");
             $('.navbar-logo img').attr('src', "{{ url_for('static', filename='images/logo-white.png') }}");
 
@@ -377,7 +416,7 @@
         let bodyScroll = $(window).scrollTop(),
             navbar = $(".navbar");
 
-        if (bodyScroll > 130) {
+        if (bodyScroll > 300) {
 
             navbar.addClass("nav-scroll");
             $('.navbar-logo img').attr('src', "{{ url_for('static', filename='images/logo-black.png') }}");
@@ -395,7 +434,7 @@
         -------------------------------------------------------*/
         $('.filtering').on('click', 'button', function () {
 
-            var filterValue = $(this).attr('data-filter');
+            let filterValue = $(this).attr('data-filter');
 
             $gallery.isotope({filter: filterValue});
 
@@ -411,7 +450,7 @@
 
     $(function () {
         $(".cover-bg").each(function () {
-            var attr = $(this).attr('data-image-src');
+            let attr = $(this).attr('data-image-src');
 
             if (typeof attr !== typeof undefined && attr !== false) {
                 $(this).css('background-image', 'url(' + attr + ')');
@@ -428,5 +467,12 @@
     });
 
 </script>
+<div href="#" id="scroll_top" class="top-button banner-btn-3-active">↑ Наверх</div>
+<div id="cookie_notification">
+    <p>Для улучшения работы сайта и его взаимодействия с пользователями мы используем файлы cookie. Продолжая работу с
+        сайтом, Вы разрешаете использование cookie-файлов. Вы всегда можете отключить файлы cookie в настройках Вашего
+        браузера.</p>
+    <button class="banner-btn-3-active cookie_accept">Принять</button>
+</div>
 </body>
 </html>

@@ -1,10 +1,12 @@
+import time
+import urllib.request
+from itertools import groupby
+
 import requests
 from bs4 import BeautifulSoup
 from flask import Flask, url_for, redirect, make_response
 from flask import render_template
 from flask import request
-from flask_login import current_user
-
 # тест-ссылки
 # https://fishki.net/video/ <-- есть видео
 from flask_sqlalchemy import SQLAlchemy
@@ -17,16 +19,47 @@ db = SQLAlchemy(app)
 is_authenticated = False
 
 
-@app.route('/service')
+@app.route('/service', methods=['GET', 'POST'])
 def service():
-    context = engine()
-    print(request.method)
-    return render_template('index.html', **context)
+    if request.method == 'POST':
+        url = request.form.get('url')
+        context = engine(url)
+        return render_template('index.html', **context)
+    context = {
+        'is_authenticated': is_authenticated
+    }
+    return render_template("service.html", **context)
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return redirect(url_for('service'))
+
+
+def human_read_format(size):
+    if not size:
+        size = 0
+    size = int(size)
+    if size >= 1024 ** 4:
+        return f'{round(size / (1024 ** 4))}ТБ'
+    elif size >= 1024 ** 3:
+        return f'{round(size / (1024 ** 3))}ГБ'
+    elif size >= 1024 ** 2:
+        return f'{round(size / (1024 ** 2))}МБ'
+    elif size >= 1024:
+        return f'{round(size / 1024)}КБ'
+    else:
+        return f'{round(size)}Б'
 
 
 def engine(url='https://fishki.net/video/'):
     url = url
     response = requests.get(url)
+    with urllib.request.urlopen(url) as urllib_adress:
+        load_time = f'{round(response.elapsed.total_seconds(), 3)} сек.'
+        content_length = human_read_format(urllib_adress.info()['Content-Length'])
+        print(load_time, content_length)
+        # print(urllib_adress.info())
     soup = BeautifulSoup(response.content, 'html.parser')
     context = {
         'images': soup.find_all('img'),
@@ -38,7 +71,11 @@ def engine(url='https://fishki.net/video/'):
         'videos': [],
         'links': [],
         'url': url,
-        'is_authenticated': is_authenticated
+        'is_authenticated': is_authenticated,
+        'meta': {
+            'load_time': load_time,
+            'content_length': content_length,
+        }
     }
 
     for link in context['images']:
@@ -54,10 +91,9 @@ def engine(url='https://fishki.net/video/'):
             src = '//'.join(url.split('/')[:3]) + '/' + src.strip('/')
             src = src.replace('////', '//')
         cleaned_context['images'].append(
-            f'<img alt="{alt}" src="{src}"></img>'
+            [f'<img alt="{alt}" src="{src}"></img>',
+             f'<a target="_blank" href="{src}" class="banner-btn-2" download>Скачать</a>']
         )
-        # print("IMG Inner Text is: {}".format(alt))
-        # print("IMG src is: {}".format(src))
 
     for link in context['videos']:
         source = link.find('source')
@@ -65,10 +101,8 @@ def engine(url='https://fishki.net/video/'):
         if src.startswith('//'):
             src = 'https:' + src
         cleaned_context['videos'].append(
-            f'<video><source src="{src}"></video>'
+            f'<video controls="controls"><source src="{src}"></video>'
         )
-        # print("VIDEO Inner Text is: {}".format(link.get("title")))
-        # print("VIDEO src is: {}".format(src))
 
     for link in context['links']:
         href = link.get("href")
@@ -82,20 +116,39 @@ def engine(url='https://fishki.net/video/'):
         if href.startswith('//'):
             href = 'https:' + href
         cleaned_context['links'].append(
-            f'<a href="{href}"></a>'
+            [href, f'<a target="_blank" class="banner-btn-2" href="{href}">Перейти</a>']
         )
-        # print("LINK Inner Text is: {}".format(link.text.strip()))
-        # print("LINK href is: {}".format(href))
+    cleaned_context['images'] = [el for el, _ in groupby(cleaned_context['images'])]
+    cleaned_context['videos'] = list(set(cleaned_context['videos']))
     return cleaned_context
 
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        language = request.form.get('language')
-        framework = request.form.get('framework')
-        return redirect(url_for('login'))
-    return render_template("login.html", title="Авторизация")
+        email = request.form.get('email')
+        password = request.form.get('password')
+        resp = make_response(redirect(url_for('service')))
+        resp.set_cookie('inlink_email', email)
+        resp.set_cookie('inlink_password', password)
+        return resp
+    email = request.form.get('email')
+    password = request.form.get('password')
+    context = {
+        'is_authenticated': is_authenticated
+    }
+    return render_template("login.html", **context)
+
+
+@app.route("/logout", )
+def logout():
+    resp = make_response(redirect(url_for('service')))
+    resp.set_cookie('inlink_email', '')
+    resp.set_cookie('inlink_password', '')
+    context = {
+        'is_authenticated': is_authenticated
+    }
+    return resp
 
 
 @app.route("/registration", methods=['GET', 'POST'])
@@ -140,7 +193,6 @@ def before_request():
             is_authenticated = False
     else:
         is_authenticated = False
-    print(is_authenticated)
 
 
 if __name__ == "__main__":

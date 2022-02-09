@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="col-md-12 section-title text-center">
+    <div class="col-lg-12 section-title text-center">
+        <h3>Анализатор веб-страниц онлайн.</h3>
+    </div>
+    <p>Вам лишь достаточно ввести адрес на желаемую веб-страницу. <br> Остальное сделаем мы.</p>
+    <span class="section-title-line"></span>
+</div>
+
+<form action="{{ url_for('service') }}" method="post" class="form-contact">
+    <input class="registration_field" type="text" placeholder="https://www.youtube.com/" name="url" value="" required/>
+    <br>
+    <input class="registration_button" type="submit" value="Анализировать"/>
+</form>
+{% endblock %}
