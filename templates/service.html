@@ -9,9 +9,18 @@
     <span class="section-title-line"></span>
 </div>
 
-<form action="{{ url_for('service') }}" method="post" class="form-contact">
-    <input class="registration_field" type="text" placeholder="https://www.youtube.com/" name="url" value="" required/>
-    <br>
-    <input class="registration_button" type="submit" value="Анализировать"/>
+<form action="{{ url_for('service') }}" method="post">
+    {{ form.csrf_token() }}
+    {{ form.hidden_tag() }}
+    <p>
+        {{ form.url.label }}<br>
+        {{ form.url(class_="registration_field", placeholder="https://www.youtube.com/") }}<br>
+        {% for error in form.url.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </p>
+    <p>{{ form.submit(class_="registration_button") }}</p>
 </form>
+
+
 {% endblock %}

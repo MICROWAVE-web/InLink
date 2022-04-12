@@ -33,11 +33,10 @@
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item"><a class="nav-link" href="" data-scroll-nav="0">Home</a></li>
                 <li class="nav-item"><a class="nav-link" href="#" data-scroll-nav="3">Own Work</a></li>
-                {% if is_authenticated %}
-                <li class="nav-item"><a class="nav-link" href="{{ url_for('logout') }}" data-scroll-nav="4">Logout</a></li>
-                {% endif %}
-                {% if not is_authenticated %}
-                <li class="nav-item"><a class="nav-link" href="{{ url_for('registration') }}" data-scroll-nav="4">Registration</a></li>
+                {% if current_user.is_anonymous %}
+                <a href="{{ url_for('login') }}">Login</a>
+                {% else %}
+                <a href="{{ url_for('logout') }}">Logout</a>
                 {% endif %}
 
             </ul>
