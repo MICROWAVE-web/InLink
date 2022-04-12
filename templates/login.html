@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<p>New User? <a href="{{ url_for('registration') }}">Click to Register!</a></p>
+<p>Новый пользователь? <a href="{{ url_for('registration') }}"> Нажмите для регистрации!</a></p>
 <br>
 <h1>Вход</h1>
 <form action="{{ url_for('login') }}" method="post">

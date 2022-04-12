@@ -2,17 +2,20 @@ from datetime import datetime
 
 import sqlalchemy
 from flask_login import UserMixin
+from sqlalchemy import orm
 from sqlalchemy.exc import DatabaseError
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from views import db
+from db_session import SqlAlchemyBase
 
 
-class User(db.Model, UserMixin):
-    id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(50), unique=True)
-    password = db.Column(db.String(500), nullable=False)
-    date = db.Column(db.DateTime, default=datetime.utcnow)
+class User(SqlAlchemyBase, UserMixin):
+    __tablename__ = 'user'
+
+    id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
+    email = sqlalchemy.Column(sqlalchemy.String(50), unique=True)
+    password = sqlalchemy.Column(sqlalchemy.String(500), nullable=False)
+    date = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.utcnow)
 
     def __repr__(self):
         return f"<users {self.id}>"
@@ -24,9 +27,12 @@ class User(db.Model, UserMixin):
         return check_password_hash(self.password, pwd)
 
 
-def initializing():
-    db.create_all()
+class Favourites(SqlAlchemyBase):
+    __tablename__ = 'favourites'
 
-
-if __name__ == '__main__':
-    initializing()
+    id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
+    url = sqlalchemy.Column(sqlalchemy.String(500))
+    date = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.utcnow)
+    user_id = sqlalchemy.Column(sqlalchemy.Integer,
+                                sqlalchemy.ForeignKey("user.id"))
+    user = orm.relation('User')

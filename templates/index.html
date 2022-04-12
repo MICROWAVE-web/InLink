@@ -246,36 +246,33 @@
                 <button id='check_links' class="banner-btn-3-active">Ссылки</button>
                 <button id='check_photos' class="banner-btn-3-active">Фото</button>
                 <button id='check_videos' class="banner-btn-3-active">Видео</button>
+                <div style="">
+                <form action="{{ url_for('save_files') }}" method="post">
+                    <input style="display: none;" name="url" value="{{ url }}" required/>
+                    <input style="display: none;" name="links" value="1" required/>
+                    <input class="registration_button" type="submit" value="Скачать все ссылки"/>
+                </form>
 
                 <form action="{{ url_for('save_files') }}" method="post">
                     <input style="display: none;" name="url" value="{{ url }}" required/>
-                    <input style="display: none;" name="links" value="1" required/>
-                    <br>
-                    <input class="registration_button" type="submit" value="Скачать все ссылки"/>
-                </form>
-                <br>
-                <form action="{{ url_for('save_files') }}" method="post">
-                    <input style="display: none;" name="url" value="{{ url }}" required/>
                     <input style="display: none;" name="pictures" value="1" required/>
-                    <br>
                     <input class="registration_button" type="submit" value="Скачать все картинки"/>
                 </form>
-                <br>
+
                 <form action="{{ url_for('save_files') }}" method="post">
                     <input style="display: none;" name="url" value="{{ url }}" required/>
                     <input style="display: none;" name="videos" value="1" required/>
-                    <br>
                     <input class="registration_button" type="submit" value="Скачать все видео"/>
                 </form>
-                <br>
+
                 <form action="{{ url_for('save_files') }}" method="post">
                     <input style="display: none;" name="url" value="{{ url }}" required/>
                     <input style="display: none;" name="videos" value="1" required/>
                     <input style="display: none;" name="pictures" value="1" required/>
                     <input style="display: none;" name="links" value="1" required/>
-                    <br>
                     <input class="registration_button" type="submit" value="Скачать всё"/>
                 </form>
+                </div>
             </div>
 
             <div class="showed" id="list-of-links">

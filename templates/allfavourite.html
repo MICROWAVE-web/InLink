@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>{{ title }}</h1>
+<br>
+<br>
+<div class="showed" id="list-of-links">
+    {% for link in all_favourites %}
+    <div class="col-xs-12 mb-30">
+        <div class="service-list-box bg-white text-center">
+            <div class="icon"><i class="fas fa-map-marked"></i></div>
+            <div class="icon-text">
+                <p style="text-overflow: ellipsis;">{{ link.url }}</p>
+                <br>
+                <a href="{{ link.url }}">Перейти</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

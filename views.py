@@ -5,25 +5,22 @@ import string
 import urllib.request
 from itertools import groupby
 from urllib.error import HTTPError
-from progress.bar import IncrementalBar
 import requests
+from requests.exceptions import ConnectionError
 from bs4 import BeautifulSoup
-from flask import Flask, url_for, redirect, flash, render_template, request, Response
-from flask_login import LoginManager, current_user, logout_user, login_user
+from flask import Flask, url_for, redirect, flash, render_template, request, Response, abort
+from flask_login import LoginManager, current_user, logout_user, login_user, login_required
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import CSRFProtect
 from sqlalchemy.exc import DatabaseError
 from tqdm import tqdm
 from werkzeug.urls import url_parse
-
-from forms import LoginForm, RegistrationForm, ServiceForm
+import db_session
+from forms import LoginForm, RegistrationForm, ServiceForm, FavouritesForm
+from models import User, Favourites
 
 app = Flask(__name__)
 login = LoginManager(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.sqlite'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
-is_authenticated = False
 SECRET_KEY = os.urandom(32)
 app.config['SECRET_KEY'] = SECRET_KEY
 csrf = CSRFProtect(app)
@@ -32,7 +29,8 @@ csrf.init_app(app)
 
 @login.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id))
+    db_sess = db_session.create_session()
+    return db_sess.query(User).get(user_id)
 
 
 @app.route('/service', methods=['GET', 'POST'])
@@ -41,9 +39,10 @@ def service():
     if form.validate_on_submit():
         url = form.url.data
         context = engine(url)
+        if not context:
+            return redirect(url_for('service'))
         return render_template('index.html', **context)
     context = {
-        'is_authenticated': is_authenticated,
         'form': form
     }
     return render_template("service.html", **context)
@@ -71,7 +70,10 @@ def human_read_format(size):
 
 
 def engine(url='https://fishki.net/video/', local_uses=False):
-    response = requests.get(url)
+    try:
+        response = requests.get(url)
+    except ConnectionError:
+        return False
     with urllib.request.urlopen(url) as urllib_adress:
         load_time = f'{round(response.elapsed.total_seconds(), 3)} сек.'
         content_length = human_read_format(urllib_adress.info()['Content-Length'])
@@ -86,7 +88,6 @@ def engine(url='https://fishki.net/video/', local_uses=False):
         'videos': [],
         'links': [],
         'url': url,
-        'is_authenticated': is_authenticated,
         'meta': {
             'load_time': load_time,
             'content_length': content_length,
@@ -155,7 +156,8 @@ def login():
         return redirect(url_for('service'))
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
+        db_sess = db_session.create_session()
+        user = db_sess.query(User).filter_by(email=form.email.data).first()
         if user is None or not user.check_password(form.password.data):
             flash('Invalid username or password')
             return redirect(url_for('login'))
@@ -182,14 +184,15 @@ def registration():
         return redirect(url_for('index'))
     form = RegistrationForm()
     if form.validate_on_submit():
+        db_sess = db_session.create_session()
         user = User(email=form.email.data)
         user.set_password(form.password.data)
-        db.session.add(user)
+        db_sess.add(user)
         try:
-            db.session.commit()
+            db_sess.commit()
             return redirect(url_for('login'))
         except DatabaseError as e:
-            db.session.rollback()
+            db_sess.rollback()
             return redirect(url_for('registration'))
 
     context = {
@@ -266,8 +269,74 @@ def save_files():
     })
 
 
-if __name__ == "__main__":
-    from models import initializing, User
+@app.route("/add_favourite", methods=['GET', 'POST'])
+@login_required
+def add_favourite():
+    form = FavouritesForm()
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        cur_user = db_sess.query(User).filter_by(id=current_user.id).first()
+        fav = Favourites()
+        fav.url = form.url.data
+        fav.user = cur_user
+        fav.user_id = current_user.id
+        db_sess.add(fav)
+        db_sess.commit()
+        return redirect(url_for('all_favourite'))
+    return render_template('addfavourite.html', title='Добавить в избранное',
+                           form=form)
 
-    initializing()
+
+@app.route("/all_favourite", methods=['GET'])
+@login_required
+def all_favourite():
+    db_sess = db_session.create_session()
+    all_favourites = db_sess.query(Favourites).filter_by(user_id=current_user.id)
+    return render_template('allfavourite.html', title='Избранные', all_favourites=all_favourites)
+
+
+@app.route('/edit_favourite/<int:idd>', methods=['GET', 'POST'])
+@login_required
+def edit_favourite(idd):
+    form = FavouritesForm()
+    db_sess = db_session.create_session()
+    fav = db_sess.query(Favourites).filter(Favourites.id == idd,
+                                           Favourites.user == current_user
+                                           ).first()
+    if not fav:
+        abort(404)
+    if request.method == "GET":
+        form.url.data = fav.url
+    if form.validate_on_submit():
+        fav.url = form.url.data
+        db_sess.commit()
+        return redirect(url_for('all_favourite'))
+    return render_template('editfavourite.html',
+                           title='Редактирование избранного',
+                           form=form,
+                           idd=idd
+                           )
+
+
+@app.route('/favourite_delete/<int:idd>', methods=['GET'])
+@login_required
+def favourite_delete(idd):
+    db_sess = db_session.create_session()
+    fav = db_sess.query(Favourites).filter(Favourites.id == idd,
+                                            Favourites.user == current_user
+                                            ).first()
+    if fav:
+        db_sess.delete(fav)
+        db_sess.commit()
+    else:
+        abort(404)
+    return redirect(url_for('all_favourite'))
+
+
+def main():
+    db_session.global_init("users.sqlite")
     app.run()
+
+
+if __name__ == "__main__":
+    main()

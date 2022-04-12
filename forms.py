@@ -19,3 +19,8 @@ class RegistrationForm(FlaskForm):
 class ServiceForm(FlaskForm):
     url = URLField('Адрес', validators=[DataRequired()])
     submit = SubmitField('Анализировать')
+
+
+class FavouritesForm(FlaskForm):
+    url = URLField('Адрес', validators=[DataRequired()])
+    submit = SubmitField('Добавить')
