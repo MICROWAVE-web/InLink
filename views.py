@@ -6,6 +6,7 @@ import urllib.request
 from itertools import groupby
 from urllib.error import HTTPError
 import requests
+from flask_restful import Api
 from requests.exceptions import ConnectionError
 from bs4 import BeautifulSoup
 from flask import Flask, url_for, redirect, flash, render_template, request, Response, abort
@@ -18,8 +19,11 @@ from werkzeug.urls import url_parse
 import db_session
 from forms import LoginForm, RegistrationForm, ServiceForm, FavouritesForm
 from models import User, Favourites
+from api import *
+
 
 app = Flask(__name__)
+api = Api(app)
 login = LoginManager(app)
 SECRET_KEY = os.urandom(32)
 app.config['SECRET_KEY'] = SECRET_KEY
@@ -323,8 +327,8 @@ def edit_favourite(idd):
 def favourite_delete(idd):
     db_sess = db_session.create_session()
     fav = db_sess.query(Favourites).filter(Favourites.id == idd,
-                                            Favourites.user == current_user
-                                            ).first()
+                                           Favourites.user == current_user
+                                           ).first()
     if fav:
         db_sess.delete(fav)
         db_sess.commit()
@@ -335,6 +339,10 @@ def favourite_delete(idd):
 
 def main():
     db_session.global_init("users.sqlite")
+    api.add_resource(UserListResource, '/api/v2/user')
+    api.add_resource(UserResource, '/api/v2/user/<int:user_id>')
+    api.add_resource(FavouriteListResource, '/api/v2/fav')
+    api.add_resource(FavouriteResource, '/api/v2/fav/<int:fav_id>')
     app.run()
 
 
