@@ -4,6 +4,9 @@
 <h1>{{ title }}</h1>
 <br>
 <br>
+<a class="banner-btn-3-active" href='{{ url_for("add_favourite") }}'>Добавить в избранное</a>
+<br>
+<br>
 <div class="showed" id="list-of-links">
     {% for link in all_favourites %}
     <div class="col-xs-12 mb-30">
@@ -13,6 +16,12 @@
                 <p style="text-overflow: ellipsis;">{{ link.url }}</p>
                 <br>
                 <a href="{{ link.url }}">Перейти</a>
+                <br>
+                <br>
+                <a style="color: #3c6fff;" href="{{ url_for('edit_favourite', idd=link.id) }}">Изменить</a>
+                <br>
+                <br>
+                <a style="color: red;" href="{{ url_for('favourite_delete', idd=link.id) }}">Удалить</a>
             </div>
         </div>
     </div>

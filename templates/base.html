@@ -31,14 +31,12 @@
                 class="fas fa-bars"></span></button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav ml-auto">
-                <li class="nav-item"><a class="nav-link" href="" data-scroll-nav="0">Home</a></li>
-                <li class="nav-item"><a class="nav-link" href="#" data-scroll-nav="3">Own Work</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('all_favourite') }}" data-scroll-nav="0">Мои избранные</a></li>
                 {% if current_user.is_anonymous %}
-                <a href="{{ url_for('login') }}">Login</a>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('login') }}">Вход</a></li>
                 {% else %}
-                <a href="{{ url_for('logout') }}">Logout</a>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('logout') }}">Выйти</a></li>
                 {% endif %}
-
             </ul>
         </div>
     </div>

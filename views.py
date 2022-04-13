@@ -107,6 +107,8 @@ def engine(url='https://fishki.net/video/', local_uses=False):
     for link in context['images']:
         alt = link.get("alt")
         src = link.get("src")
+        if not src:
+            continue
         if src.startswith('data:'):
             continue
         if alt:
@@ -125,6 +127,8 @@ def engine(url='https://fishki.net/video/', local_uses=False):
     for link in context['videos']:
         source = link.find('source')
         src = source.get('src')
+        if not src:
+            continue
         if src.startswith('//'):
             src = 'https:' + src
         cleaned_context['videos'].append(
@@ -134,7 +138,7 @@ def engine(url='https://fishki.net/video/', local_uses=False):
 
     for link in context['links']:
         href = link.get("href")
-        if link.text == '' or not href:
+        if not href or link.text == '':
             continue
         if ':void' in href:
             continue

@@ -31,15 +31,11 @@
                 class="fas fa-bars"></span></button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav ml-auto">
-                <li class="nav-item"><a class="nav-link" href="" data-scroll-nav="0">Home</a></li>
-                <li class="nav-item"><a class="nav-link" href="#" data-scroll-nav="3">Own Work</a></li>
-                {% if is_authenticated %}
-                <li class="nav-item"><a class="nav-link" href="{{ url_for('logout') }}" data-scroll-nav="4">Logout</a>
-                </li>
-                {% endif %}
-                {% if not is_authenticated %}
-                <li class="nav-item"><a class="nav-link" href="{{ url_for('registration') }}" data-scroll-nav="4">Registration</a>
-                </li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('all_favourite') }}" data-scroll-nav="0">Мои избранные</a></li>
+                {% if current_user.is_anonymous %}
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('login') }}">Вход</a></li>
+                {% else %}
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('logout') }}">Выйти</a></li>
                 {% endif %}
             </ul>
         </div>
@@ -246,23 +242,26 @@
                 <button id='check_links' class="banner-btn-3-active">Ссылки</button>
                 <button id='check_photos' class="banner-btn-3-active">Фото</button>
                 <button id='check_videos' class="banner-btn-3-active">Видео</button>
-                <div style="">
+                <br>
+                <br>
+                <p>Все найденные данные на странице можно скачать:</p>
+                <div style="display: flex;">
                 <form action="{{ url_for('save_files') }}" method="post">
                     <input style="display: none;" name="url" value="{{ url }}" required/>
                     <input style="display: none;" name="links" value="1" required/>
-                    <input class="registration_button" type="submit" value="Скачать все ссылки"/>
+                    <input class="banner-btn-3-active" type="submit" value="Скачать все ссылки"/>
                 </form>
 
                 <form action="{{ url_for('save_files') }}" method="post">
                     <input style="display: none;" name="url" value="{{ url }}" required/>
                     <input style="display: none;" name="pictures" value="1" required/>
-                    <input class="registration_button" type="submit" value="Скачать все картинки"/>
+                    <input class="banner-btn-3-active" type="submit" value="Скачать все картинки"/>
                 </form>
 
                 <form action="{{ url_for('save_files') }}" method="post">
                     <input style="display: none;" name="url" value="{{ url }}" required/>
                     <input style="display: none;" name="videos" value="1" required/>
-                    <input class="registration_button" type="submit" value="Скачать все видео"/>
+                    <input class="banner-btn-3-active" type="submit" value="Скачать все видео"/>
                 </form>
 
                 <form action="{{ url_for('save_files') }}" method="post">
@@ -270,7 +269,7 @@
                     <input style="display: none;" name="videos" value="1" required/>
                     <input style="display: none;" name="pictures" value="1" required/>
                     <input style="display: none;" name="links" value="1" required/>
-                    <input class="registration_button" type="submit" value="Скачать всё"/>
+                    <input class="banner-btn-3-active" type="submit" value="Скачать всё"/>
                 </form>
                 </div>
             </div>
