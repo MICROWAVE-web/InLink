@@ -78,9 +78,12 @@ def engine(url='https://fishki.net/video/', local_uses=False):
         response = requests.get(url)
     except ConnectionError:
         return False
-    with urllib.request.urlopen(url) as urllib_adress:
-        load_time = f'{round(response.elapsed.total_seconds(), 3)} сек.'
-        content_length = human_read_format(urllib_adress.info()['Content-Length'])
+    try:
+        with urllib.request.urlopen(url) as urllib_adress:
+            load_time = f'{round(response.elapsed.total_seconds(), 3)} сек.'
+            content_length = human_read_format(urllib_adress.info()['Content-Length'])
+    except Exception:
+        return False
     soup = BeautifulSoup(response.content, 'html.parser')
     context = {
         'images': soup.find_all('img'),
