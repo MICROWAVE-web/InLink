@@ -1,4 +1,5 @@
 Flask
+SQLAlchemy-serializer
 Flask-Login
 flask-ngrok
 Flask-RESTful
