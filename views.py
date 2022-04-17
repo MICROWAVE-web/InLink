@@ -347,7 +347,8 @@ def main():
     api.add_resource(UserResource, '/api/v2/user/<int:user_id>')
     api.add_resource(FavouriteListResource, '/api/v2/fav')
     api.add_resource(FavouriteResource, '/api/v2/fav/<int:fav_id>')
-    app.run()
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)
 
 
 if __name__ == "__main__":
